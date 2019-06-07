@@ -6,6 +6,8 @@
 
 QT       += core gui
 QT       += network
+QT += webenginewidgets
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = wbUI
@@ -25,7 +27,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        MYROBOT.cpp \
+        MyRobot.cpp \
         main.cpp \
         mainwindow.cpp \
         robotcontroller.cpp

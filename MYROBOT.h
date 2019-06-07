@@ -28,9 +28,12 @@ public slots:
     void MyTimerSlot();
     void speed(char speed_right, char speed_left, bool dir_right, bool dir_left);
     qint16 crc16(QByteArray adresse_tab , unsigned char taille_max);
+    int getBat();
+    void getStats();
 private:
     QTcpSocket *socket;
     QTimer *TimerEnvoi;
+    float batterie;
 };
 
 #endif // MYROBOT_H

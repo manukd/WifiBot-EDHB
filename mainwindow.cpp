@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "MYROBOT.h"
 #include <QShortcut>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -55,18 +56,23 @@ void MainWindow::init(){
     // --- Init WifiBotObject ---
     wifiBot = new MyRobot();
     rbController = new RobotController(wifiBot);
-
+    qDebug() << "valeur batterie init : " << wifiBot->getBat();
 }
 
 void MainWindow::startConnection(){
+    QWebEngineView *view = new QWebEngineView(this);
     if(!this->rbController->getState())
     {
         ui->console->append("Connexion...");
         ui->connectionButton->setText("Se déconnecter");
         wifiBot->doConnect();
+        wifiBot->readyRead();
         ui->console->append("Robot correctement connecté.");
         this->rbController->setState(true);
-        //load(QUrl("http://192.168.1.106:8080/?action=stream"));
+        view->load(QUrl("http://192.168.1.11:8080/?action=stream"));
+        view->resize(ui->cam->size());
+        view->setContentsMargins(10,10,0,0);
+        view->show();
     }
     else
     {
@@ -75,7 +81,6 @@ void MainWindow::startConnection(){
         wifiBot->disConnect();
         ui->console->append("Robot correctement déconnecté.");
         this->rbController->setState(false);
-
     }
 
 }
@@ -84,29 +89,28 @@ void MainWindow::startConnection(){
 void MainWindow::go(int way){
     switch(way){
         case 1:
-            qDebug() << "go front";
             rbController->goFront();
-            setBatteryBar(15);
+            setBatteryBar(wifiBot->getBat());
             break;
         case 2:
-            qDebug() << "go back";
             rbController->goBack();
+            setBatteryBar(wifiBot->getBat());
             break;
         case 3:
-            qDebug() << "go left";
             rbController->turnLeft(false);
+            setBatteryBar(wifiBot->getBat());
             break;
         case 4:
-            qDebug() << "go right";
             rbController->turnRight(false);
+            setBatteryBar(wifiBot->getBat());
             break;
         case 5:
-            qDebug() << "go front left";
             rbController->turnLeft(true);
+            setBatteryBar(wifiBot->getBat());
             break;
         case 6:
-            qDebug() << "go front right";
             rbController->turnRight(true);
+            setBatteryBar(wifiBot->getBat());
             break;
         default:
            qDebug() << "Error - Switch - go() - Not suppose to be here... ";
@@ -125,18 +129,7 @@ void MainWindow::handleSlider(){
 
 void MainWindow::setBatteryBar(int value){
     ui->batteryBar->setValue(value);
-    if(value < 20)
-           ui->batteryBar->setStyleSheet("QProgressBar{\
-                                         color:#eee;\
-                                         }\
-                                         QProgressBar:horizontal {\
-                                         border:#2c2c2c;\
-                                         padding-right: 30px;\
-                                         text-align : right;\
-                                         }\
-                                         QProgressBar::chunk:horizontal {\
-                                         background: qlineargradient(x1: -0.5, y1: 0.5, x2: 1, y2: 0.5, stop: 1 #EE0000, stop: 0 #2c2c2c);\
-                                         }");
+    qDebug() << "valeur batterie set bar : " << value;
 }
 
 /// --- Direction Button ---

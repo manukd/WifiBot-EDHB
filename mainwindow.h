@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QSlider>
+#include <QWebEngineView>
 
 #include "MYROBOT.h"
 #include "robotcontroller.h"
