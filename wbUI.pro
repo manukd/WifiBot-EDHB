@@ -30,12 +30,14 @@ SOURCES += \
         MyRobot.cpp \
         main.cpp \
         mainwindow.cpp \
-        robotcontroller.cpp
+        robotcontroller.cpp \
+        sensors.cpp
 
 HEADERS += \
-        MYROBOT.h \
+        MyRobot.h \
         mainwindow.h \
-        robotcontroller.h
+        robotcontroller.h \
+        sensors.h
 
 FORMS += \
         mainwindow.ui

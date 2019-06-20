@@ -1,6 +1,6 @@
 // myrobot.cpp
 
-#include "MYROBOT.h"
+#include "MyRobot.h"
 
 MyRobot::MyRobot(QObject *parent) : QObject(parent) {
     DataToSend.resize(9);
@@ -19,7 +19,6 @@ MyRobot::MyRobot(QObject *parent) : QObject(parent) {
     connect(TimerEnvoi, SIGNAL(timeout()), this, SLOT(MyTimerSlot())); //Send data to wifibot timer
 }
 
-
 void MyRobot::doConnect() {
     socket = new QTcpSocket(this); // socket creation
     connect(socket, SIGNAL(connected()),this, SLOT(connected()));
@@ -35,7 +34,19 @@ void MyRobot::doConnect() {
         return;
     }
     TimerEnvoi->start(75);
+    connect(TimerEnvoi,SIGNAL(timeout()),this,SLOT(refresh()));
+}
 
+void MyRobot::refresh()
+{
+    qDebug() << "taille : ";
+    qDebug() << this->DataReceived.size();
+    qDebug() << (unsigned char)DataReceived[2];
+    if(this->DataReceived.size() > 17)
+    {
+        qDebug() << "Envoi";
+        emit updateUI(DataReceived);
+    }
 }
 
 void MyRobot::disConnect() {
@@ -58,10 +69,8 @@ void MyRobot::bytesWritten(qint64 bytes) {
 void MyRobot::readyRead() {
     qDebug() << "reading..."; // read the data from the socket
     DataReceived = socket->readAll();
-    emit updateUI(DataReceived);
     this->batterie = (float)DataReceived[2];
     qDebug() << (unsigned char)DataReceived[2];
-    //this->getStats();
 }
 
 void MyRobot::MyTimerSlot() {
@@ -113,36 +122,4 @@ qint16 MyRobot::crc16(QByteArray adresse_tab , unsigned char taille_max)
                 } // "ou exclusif" entre le CRC et le polynome generateur.
         }
         return(Crc);
-}
-
-void MyRobot::getStats()
-{
-    float sensors[11];
-    QByteArray ba = socket->readAll();
-
-       if(ba.size() > 17)
-       {
-           quint32 odoL,odoR;
-           qint16 speedL,speedR;
-           quint8 battery,adc0,adc1,adc3,adc4,current,version;
-
-           sensors[0] = ba.at(2);
-           qDebug() << sensors[0];
-           // Left
-           /*speedL = ba.at(0)+(ba.at(1)<<8);
-           adc4 = ba.at(3);
-           adc3 = ba.at(4);
-           odoL = ba.at(5)+(ba.at(6)<<8)+(ba.at(7)<<16)+(ba.at(8)<<24);
-
-           // Right
-           speedR = ba.at(9)+(ba.at(10)<<8);
-           adc0 = ba.at(11);
-           adc1 = ba.at(12);
-           odoR = ba.at(13)+(ba.at(14)<<8)+(ba.at(15)<<16)+(ba.at(16)<<24);
-           current = ba.at(17);
-           version = ba.at(18);*/
-
-           //On suppose que la batterie est déchargée à 11.3V et pleine à 12.8 et et si c'est au dessus, c'est parce qu'il recharge
-
-       }
 }

@@ -17,9 +17,6 @@ public:
     QByteArray DataToSend;
     QByteArray DataReceived;
     QMutex Mutex;
-
-signals:
-    void updateUI(const QByteArray Data);
 public slots:
     void connected();
     void disconnected();
@@ -29,11 +26,13 @@ public slots:
     void speed(char speed_right, char speed_left, bool dir_right, bool dir_left);
     qint16 crc16(QByteArray adresse_tab , unsigned char taille_max);
     int getBat();
-    void getStats();
+    void refresh();
 private:
     QTcpSocket *socket;
     QTimer *TimerEnvoi;
     float batterie;
+signals:
+    void updateUI(const QByteArray Data);
 };
 
 #endif // MYROBOT_H

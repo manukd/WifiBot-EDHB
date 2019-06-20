@@ -5,8 +5,9 @@
 #include <QPushButton>
 #include <QSlider>
 #include <QWebEngineView>
+#include <QKeyEvent>
 
-#include "MYROBOT.h"
+#include "MyRobot.h"
 #include "robotcontroller.h"
 
 namespace Ui {
@@ -15,18 +16,18 @@ class MainWindow;
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
-
+Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void init();
     static void writeConsole(char* text);
+    void camControl(int i);
 
 private slots:
     void startConnection();
     void handleSlider();
-    void setBatteryBar(int value);
+    void setBatteryBar(const QByteArray Data);
     void go(int way);
 
     void on_front_pressed();
@@ -42,12 +43,27 @@ private slots:
     void on_frontRight_released();
     void on_left_released();
     void on_back_released();
+
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
+
+    void on_cam_up_clicked();
+
+    void on_cam_down_clicked();
+
+    //void on_cam_left_clicked();
+
+    void on_cam_right_clicked();
+
+    void on_cam_left_pressed();
+
 private:
     Ui::MainWindow *ui;
 
     /// --- Working variables ---
     MyRobot *wifiBot;
     RobotController *rbController;
+    QNetworkAccessManager *manager;
 };
 
 #endif // MAINWINDOW_H

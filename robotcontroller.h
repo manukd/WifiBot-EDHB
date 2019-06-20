@@ -1,7 +1,7 @@
 #ifndef ROBOTCONTROLLER_H
 #define ROBOTCONTROLLER_H
 
-#include "MYROBOT.h"
+#include "MyRobot.h"
 
 class RobotController
 {
